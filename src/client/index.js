@@ -1,7 +1,9 @@
+var url = 'http://localhost:3001/';
+
 const onSubmitRegister = async(event) => {
     event.preventDefault();
-
-    const resp = await onFetch('http://localhost:3001/users', event);
+    
+    const resp = await onFetch(`${ url }users`, event);
     
     if(!resp) {
         Swal.fire('¡Error al registrar usuario!', '', 'error');
@@ -16,7 +18,7 @@ const onSubmitRegister = async(event) => {
 const onSubmitLogin = async(event) => {
     event.preventDefault();
 
-    const resp = await onFetch('http://localhost:3001/users/login', event);
+    const resp = await onFetch(`${ url }users/login`, event);
     
     if(!resp) {
         Swal.fire('¡Error al iniciar sesion!', '', 'error');
@@ -24,11 +26,11 @@ const onSubmitLogin = async(event) => {
     }
 
     localStorage.setItem('token', resp.token);
-    window.location.href = 'http://localhost:3001/reels.html';
+    window.location.href = `${ url }reels.html`;
 
 }
 
-const onFetch = async(url, { target }) => {
+const onFetch = async(_url, { target }) => {
     
     const token = localStorage.getItem('token');
 
@@ -40,7 +42,7 @@ const onFetch = async(url, { target }) => {
     }
 
     try {
-        const userResp = await fetch(url, {
+        const userResp = await fetch(_url, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + token,

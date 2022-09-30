@@ -1,5 +1,7 @@
+var url = 'http://localhost:3001/';
+
 const checkSession = async() => {
-    const auth = await fetch('http://localhost:3001/users/auth-status?token='+localStorage.getItem('token'), {
+    const auth = await fetch(`${ url }users/auth-status?token=`+localStorage.getItem('token'), {
         method: 'GET',
         headers: {
         }
@@ -12,27 +14,27 @@ const checkSession = async() => {
 
 const showVideo = (videos) => {
     const VideoList = document.querySelector('.video-list');
-    videos.forEach( video => {
+    videos.forEach( reel => {
 
         const spin = '<div class="spinner-border" role="status">'+
             '<span class="visually-hidden">Loading...</span>'+
         '</div>';
-        const img = '<img src="'+ video.urlImage +'" alt="" class="img-thumbnail" />';
-        console.log(video.urlImage);
+        const img = '<img src="'+ reel.urlImage +'" alt="" class="img-thumbnail" />';
+        console.log(reel.urlImage);
         const list = '<div class="col-md-4 col-lg-4 col-sm-6 col-12 pb-4">'+
             '<div class="row">'+
                 '<div class="col-7">'+
-                    '<img src="http://localhost:3001/reels/photo/'+ video.urlImage +'" alt="Img" class="img-thumbnail" />' +
+                    '<img src="'+ url +'reels/photo/'+ reel.urlImage +'" alt="Img" class="img-thumbnail" />' +
                 '</div>'+
                 '<div class="col-5 position-relative">'+
-                    '<h6>'+ video.title +'</h6>'+
-                    '<a href="http://localhost:3001/reels/videos/'+ video.url +'" target="_blanck">watch video <i class="fa-sharp fa-solid fa-arrow-up-right-from-square"></i></a>'+
+                    '<h6>'+ reel.title +'</h6>'+
+                    '<a href="'+ url +'reels/videos/'+ reel.url +'" target="_blanck">watch video <i class="fa-sharp fa-solid fa-arrow-up-right-from-square"></i></a>'+
                     '<br/>'+
                     '<br/>'+
                     '<br/>'+
                     '<br/>'+
                     '<a href="#" class="position-absolute bottom-0 start-0 text-danger" onClick= onDelete(event) >delete</a>'+
-                    '<input type="hidden" class="id_video" value="'+ video._id +'">'+
+                    '<input type="hidden" class="id_video" value="'+ reel._id +'">'+
                     
                 '</div>'+ 
             '</div>'+
@@ -49,10 +51,10 @@ const getAllVideos = async() => {
     const authStatus = await checkSession();
 
     if(!authStatus) {
-        window.location.href = 'http://localhost:3001';
+        window.location.href = `${ url }`;
     }    
     const token = localStorage.getItem('token');
-    const userResp = await fetch('http://localhost:3001/reels', {
+    const userResp = await fetch(`${ url }reels`, {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + token,
@@ -72,7 +74,7 @@ const onClickUpload = async(event) => {
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
 
-    const resp = await fetch('http://localhost:3001/reels/upload', {
+    const resp = await fetch(`${ url }reels/upload`, {
         method: 'POST',
         headers: {
             'Authorization': 'Bearer ' + token,
@@ -88,7 +90,7 @@ const onClickUpload = async(event) => {
 }
 const logout = (event) => {
     localStorage.removeItem('token'); 
-    window.location.href = 'http://localhost:3001/index.html';
+    window.location.href = `${ url }index.html`;
 }
 
 const onDelete = (event) => {
@@ -97,8 +99,10 @@ const onDelete = (event) => {
     const id = reel.parentNode.querySelector('.id_video');
     
     const token = localStorage.getItem('token');
+    
+    console.log(`${ url }reels/${ id.value }`);
 
-    fetch(`http://localhost:3001/reels/${ id.value }`, {
+    fetch(`${ url }reels/${ id.value }`, {
         method: 'DELETE',
         headers: {
             'Authorization': 'Bearer ' + token,

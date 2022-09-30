@@ -30,7 +30,7 @@ export class ReelsService {
 
   async findById(id: string): Promise<Reel> {
     const reel = await this.reelModel.findById(id);
-
+    
     if (!reel) return;
 
     return reel;

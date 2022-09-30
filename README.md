@@ -16,8 +16,10 @@ Set variables
 
 ```bash
 
-# up database
+# buils project
+npm run build
 
+# create database
 docker-compose up -d
 
 # development
