@@ -6,23 +6,20 @@ import { User } from '../entities/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private readonly userService: UsersService
-  ) {
+  constructor(private readonly userService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT,
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: any): Promise<User> {
     const { id } = payload;
 
     const user = await this.userService.findOne(id);
 
-    if (!user)
-        throw new UnauthorizedException(`Token not vaid`)
-        
+    if (!user) throw new UnauthorizedException(`Token not vaid`);
+
     return user;
   }
 }

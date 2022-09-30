@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UploadedFile, UseInterceptors, UseGuards, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Delete,
+  UploadedFile,
+  UseInterceptors,
+  UseGuards,
+  Res,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ReelsService } from './reels.service';
 import { CreateReelDto } from './dto/create-reel.dto';
-import { UpdateReelDto } from './dto/update-reel.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { GetUser } from '../users/decorators/get-user.decorator';
@@ -10,30 +19,24 @@ import { User } from '../users/entities/user.entity';
 import { CutVideoInterceptor } from './interceptors/cut-video.interceptor';
 import { fileName } from './helpers/fileName.helper';
 import { Response } from 'express';
-import { fileImageUrl, fileVideoUrl } from './helpers/file-url.helper';
-import * as fs from 'fs';
+import { fileImageUrl } from './helpers/file-url.helper';
 
 @Controller('reels')
 export class ReelsController {
-  constructor(
-    private readonly reelsService: ReelsService,
-  ) {}
+  constructor(private readonly reelsService: ReelsService) {}
 
   @Get('videos/:videoName')
   findVideoImage(
     @Res() response: Response,
-    @Param('videoName') videoName: string
-  ){
+    @Param('videoName') videoName: string,
+  ) {
     const path = this.reelsService.getVideo(videoName);
 
     response.sendFile(path);
   }
 
   @Get('photo/:photoName')
-  findPhoto(
-    @Res() response: Response,
-    @Param('photoName') photoName: string
-  ){
+  findPhoto(@Res() response: Response, @Param('photoName') photoName: string) {
     const path = this.reelsService.getPhoto(photoName);
 
     response.sendFile(path);
@@ -44,27 +47,23 @@ export class ReelsController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        filename: fileName
-      })
+        filename: fileName,
+      }),
     }),
-    CutVideoInterceptor
+    CutVideoInterceptor,
   )
-  create( 
-    @GetUser() user: User,
-    @UploadedFile() file: Express.Multer.File
-  ) {
+  create(@GetUser() user: User, @UploadedFile() file: Express.Multer.File) {
     const imageName = file.originalname.split('.');
-    imageName.pop()
+    imageName.pop();
     const fileName = imageName.join('.');
-    const urlVideo = fileVideoUrl(file.filename);
     const urlImage = fileImageUrl(file.filename);
-    
+
     const createReelDto = new CreateReelDto(
       fileName,
-      urlVideo,
+      file.filename,
       urlImage,
       user.id,
-      new Date()
+      new Date(),
     );
 
     return this.reelsService.create(createReelDto);
@@ -72,9 +71,7 @@ export class ReelsController {
 
   @Get()
   @UseGuards(AuthGuard())
-  findAll(
-    @GetUser() user: User,
-  ) {
+  findAll(@GetUser() user: User) {
     return this.reelsService.findAll(user);
   }
 

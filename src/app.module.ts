@@ -10,7 +10,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname,'..','/src/client')
+      rootPath: join(__dirname, '..', '/src/client'),
     }),
     MongooseModule.forRoot(process.env.MONGODB_CONNECTION),
     ReelsModule,

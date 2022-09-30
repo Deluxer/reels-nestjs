@@ -8,7 +8,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-
 @Module({
   imports: [
     ConfigModule,
@@ -16,9 +15,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       {
         name: User.name,
         schema: UserSchema,
-      }
+      },
     ]),
-    PassportModule.register({ defaultStrategy: 'jwt'}),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -26,17 +25,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         return {
           secret: configService.get('JWT'),
           signOptions: {
-            expiresIn: '2h'
-          }
-        }
-      } 
-    })
+            expiresIn: '2h',
+          },
+        };
+      },
+    }),
   ],
   controllers: [UsersController],
-  providers: [
-    UsersService,
-    JwtStrategy,
-  ],
-  exports: [ JwtModule, PassportModule, JwtStrategy ]
+  providers: [UsersService, JwtStrategy],
+  exports: [JwtModule, PassportModule, JwtStrategy],
 })
 export class UsersModule {}

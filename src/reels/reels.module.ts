@@ -1,6 +1,5 @@
 import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 
 import { ReelsService } from './reels.service';
 import { ReelsController } from './reels.controller';
@@ -16,12 +15,10 @@ import { UsersModule } from 'src/users/users.module';
         name: Reel.name,
         schema: ReelSchema,
       },
-    ]),    
-    UsersModule
+    ]),
+    UsersModule,
   ],
   controllers: [ReelsController],
-  providers: [
-    ReelsService,
-  ],
+  providers: [ReelsService],
 })
 export class ReelsModule {}
