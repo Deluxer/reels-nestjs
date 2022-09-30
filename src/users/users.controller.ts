@@ -1,0 +1,39 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginDto } from './dto/login.dto';
+import { GetUser } from './decorators/get-user.decorator';
+import { User } from './entities/user.entity';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  register(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.register(createUserDto);
+  }
+
+  @Post('login')
+  login(@Body() createUserDto: LoginDto) {
+    return this.usersService.login(createUserDto);
+  }
+
+  @Get('auth-status')
+  findAuth(@Query() params: any) {
+    return this.usersService.getAuth(params.token);
+  }
+
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
+  }
+
+}
