@@ -8,19 +8,13 @@ const checkSession = async() => {
     });
     
     const resp = await auth.json();
-    
     return resp.status;
 }
 
 const showVideo = (videos) => {
-    const VideoList = document.querySelector('.video-list');
+    const reelList = document.querySelector('.video-list');
+    
     videos.forEach( reel => {
-
-        const spin = '<div class="spinner-border" role="status">'+
-            '<span class="visually-hidden">Loading...</span>'+
-        '</div>';
-        const img = '<img src="'+ reel.urlImage +'" alt="" class="img-thumbnail" />';
-        console.log(reel.urlImage);
         const list = '<div class="col-md-4 col-lg-4 col-sm-6 col-12 pb-4">'+
             '<div class="row">'+
                 '<div class="col-7">'+
@@ -39,17 +33,23 @@ const showVideo = (videos) => {
                 '</div>'+ 
             '</div>'+
         '</div>';
-
-        VideoList.innerHTML += list;
+        reelList.innerHTML += list;
     });
 
-    
+    const spin = '<div id="spin-reel" class="spinner-border" role="status">'+
+            '<span class="visually-hidden">Loading...</span>'+
+        '</div>';
+
+    if(videos.length === 0) {
+        reelList.innerHTML += spin;
+    }
 }
 
 const getAllVideos = async() => {
-
+    
+    
     const authStatus = await checkSession();
-
+    
     if(!authStatus) {
         window.location.href = `${ url }`;
     }    
@@ -61,8 +61,9 @@ const getAllVideos = async() => {
             'Content-Type': 'application/json'
         },
     });
-
+    
     const videos = await userResp.json();
+    if(videos.length > 0)
     showVideo(videos);
 }
 
@@ -73,6 +74,7 @@ const onClickUpload = async(event) => {
     const fileInput = document.querySelector('#file');
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
+    showVideo([]);
 
     const resp = await fetch(`${ url }reels/upload`, {
         method: 'POST',
@@ -81,14 +83,18 @@ const onClickUpload = async(event) => {
         },
         body: formData
     });
+
     const video = await resp.json();
     showVideo([video]);
 
+    const spinReel = document.querySelector('#spin-reel');
+    spinReel.remove();
+    
     Swal.fire('¡File Uploades successfully!', '', 'success');
 
     return 
 }
-const logout = (event) => {
+const logout = () => {
     localStorage.removeItem('token'); 
     window.location.href = `${ url }index.html`;
 }
@@ -100,13 +106,10 @@ const onDelete = (event) => {
     
     const token = localStorage.getItem('token');
     
-    console.log(`${ url }reels/${ id.value }`);
-
     fetch(`${ url }reels/${ id.value }`, {
         method: 'DELETE',
         headers: {
             'Authorization': 'Bearer ' + token,
-            // 'Content-Type': 'application/json'
         },
     });
 
