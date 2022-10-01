@@ -31,3 +31,6 @@ npm run start:dev
 # production mode
 npm run start:prod
 ```
+
+## Install package
+sudo apt install ffmpeg
